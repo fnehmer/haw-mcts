@@ -1,6 +1,6 @@
 # haw-mcts
 
-## Exploring the Monte Carlo Tree Search
+### Exploring the Monte Carlo Tree Search
 
 Assignment for the lecture Intelligent Systems at Hochschule für Angewandte Wissenschaften Hamburg
 

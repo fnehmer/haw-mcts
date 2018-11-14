@@ -7,3 +7,6 @@ Assignment for the lecture Intelligent Systems at Hochschule für Angewandte Wis
 The assignment is to explore any intelligent search technique.
 
 I created this Jupyter Notebook to gather information, with the Intention to understand the Monte Carlo Tree Search in depth.
+
+View Notebook:
+https://colab.research.google.com/github/F1owin/haw-mcts/blob/master/mcts.ipynb

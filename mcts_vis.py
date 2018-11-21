@@ -166,8 +166,20 @@ def UCT(rootstate, itermax, verbose = False):
             node = node.AddChild(m,state) # add child and descend tree
 
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
+
         while state.GetMoves() != [] and not state.GameFinished(): # while state is non-terminal
             state.DoMove(random.choice(state.GetMoves()))
+
+
+        # Multi Simulation x2
+        # 
+        # compareState = state.Clone()
+        # while state.GetMoves() != [] and not state.GameFinished(): # while state is non-terminal
+        #     state.DoMove(random.choice(state.GetMoves()))
+        # while compareState.GetMoves() != [] and not compareState.GameFinished():
+        #     compareState.DoMove(random.choice(compareState.GetMoves()))
+        # if compareState.GetResult(node.playerJustMoved) > state.GetResult(node.playerJustMoved):
+        #     state = compareState
 
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
@@ -188,9 +200,9 @@ def UCTPlayGame():
     while (state.GetMoves() != [] and not state.GameFinished()):
         print(str(state))
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 100000, verbose = True) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 7000, verbose = False) # play with values for itermax and verbose = True
         else:
-            m = UCT(rootstate = state, itermax = 10000, verbose = False)
+            m = UCT(rootstate = state, itermax = 250, verbose = True)
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
     if state.GetResult(state.playerJustMoved) == 1.0:

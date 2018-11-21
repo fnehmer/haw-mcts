@@ -29,7 +29,7 @@ class OXOState:
         where 0 = empty, 1 = player 1 (X), 2 = player 2 (O)
     """
     def __init__(self):
-        self.playerJustMoved = 2 # At the root pretend the player just moved is p2 - p1 has the first move
+        self.playerJustMoved = 2
         self.board = [0,0,0,0,0,0,0,0,0] # 0 = empty, 1 = player 1, 2 = player 2
         
     def Clone(self):
@@ -63,7 +63,7 @@ class OXOState:
                 else:
                     return 0.0
         if self.GetMoves() == []: return 0.5 # draw
-        assert False # Should not be possible to get here
+        assert False # There is an invalid game situation
 
     def GameFinished(self):
         """ Check if the game has finished yet.
@@ -166,9 +166,9 @@ def UCT(rootstate, itermax, verbose = False):
             node = node.AddChild(m,state) # add child and descend tree
 
         # Rollout - this can often be made orders of magnitude quicker using a state.GetRandomMove() function
-
-        while state.GetMoves() != [] and not state.GameFinished(): # while state is non-terminal
-            state.DoMove(random.choice(state.GetMoves()))
+        # 
+        # while state.GetMoves() != [] and not state.GameFinished(): # while state is non-terminal
+        #     state.DoMove(random.choice(state.GetMoves()))
 
 
         # Multi Simulation x2
@@ -180,6 +180,23 @@ def UCT(rootstate, itermax, verbose = False):
         #     compareState.DoMove(random.choice(compareState.GetMoves()))
         # if compareState.GetResult(node.playerJustMoved) > state.GetResult(node.playerJustMoved):
         #     state = compareState
+
+
+        # Multi Simulation times X
+        #
+        resultState = state.Clone()
+        while resultState.GetMoves() != [] and not resultState.GameFinished():
+            resultState.DoMove(random.choice(resultState.GetMoves()))
+        
+        s = 0
+        for counter in range(1,1): # the first value after the comma is the number of multiple simulations.
+            compareState = state.Clone()
+            while compareState.GetMoves() != [] and not compareState.GameFinished():
+                compareState.DoMove(random.choice(compareState.GetMoves()))
+            if compareState.GetResult(node.playerJustMoved) > resultState.GetResult(node.playerJustMoved):
+                resultState = compareState
+            s += counter
+        state = resultState
 
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
@@ -200,9 +217,9 @@ def UCTPlayGame():
     while (state.GetMoves() != [] and not state.GameFinished()):
         print(str(state))
         if state.playerJustMoved == 1:
-            m = UCT(rootstate = state, itermax = 7000, verbose = False) # play with values for itermax and verbose = True
+            m = UCT(rootstate = state, itermax = 10000, verbose = False) # play with values for itermax and verbose = True
         else:
-            m = UCT(rootstate = state, itermax = 250, verbose = True)
+            m = UCT(rootstate = state, itermax = 10000, verbose = False)
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
     if state.GetResult(state.playerJustMoved) == 1.0:
